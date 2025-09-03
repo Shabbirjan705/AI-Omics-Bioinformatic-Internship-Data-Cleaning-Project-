@@ -1,0 +1,36 @@
+# Define the classification function
+classify_gene <- function(logFC, padj)
+if (is.na(padj))
+padj <- 1  # Replace NA with 1 (not significant)
+
+if (padj < 0.05)
+if (logFC > 1)  
+return("Upregulated")  
+else if (logFC < -1)
+return("Downregulated")  
+
+return("Not_Significant")
+
+
+# Set up file list and Results folder
+files <- c("DEGs_data_1.csv", "DEGs_data_2.csv")
+if (!dir.exists("Results"))
+dir.create("Results")  
+
+
+for (file in files)
+data <- read.csv(file)  
+data$padj[is.na(data$padj)] <- 1
+data$status <- mapply(classify_gene, data$logFC, data$padj)
+
+
+output_file <- paste0("Results/processed_", file)
+write.csv(data, output_file, row.names = FALSE)
+cat("\nSummary for", file, ":\n")
+
+
+print(table(data$status))
+
+
+save.image(file == "muhammadshabbirahmad_Class_2B_Assignment.RData")
+file = ("muhammadshabbirahmad_Class_2_Assignment.RData")
